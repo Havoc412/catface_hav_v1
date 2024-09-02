@@ -1,2 +1,3 @@
-!/test
-!/model_zoo/models
+/test
+/model_zoo/models/group-1/*
+
