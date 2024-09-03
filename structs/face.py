@@ -2,10 +2,10 @@ import numpy as np
 
 
 class Face:
-    def __init__(self, box, conf, kpts):
+    def __init__(self, box=None, conf=None, kpts=None):
         self.box = box
         self.conf = conf
-        self.kpts = kpts.numpy()[:, :2]
+        self.kpts = kpts.numpy()[:, :2] if kpts is not None else None
 
         # self.img  # by detect
 

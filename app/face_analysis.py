@@ -13,8 +13,9 @@ class FaceAnalysis:
     def __init__(self, name="group-1", root="./model_zoo/models", obb_threshold=.5, pose_threshold=.5, **kwargs):
         self.models = {}
         self.model_dir = ensure_model_available(name, root=root)
-        pt_files = glob.glob(osp.join(self.model_dir, '*.pt'))  # 这里获得的是完整的路径
-        # print(pt_files)
+        # 这里获得的是完整的路径
+        pt_files = glob.glob(osp.join(self.model_dir, '*.pt')) + glob.glob(osp.join(self.model_dir, '*.pth'))
+        print(pt_files)
         for pt_file in pt_files:
             model = model_zoo.get_model(pt_file, **kwargs)
             if model is None:
@@ -44,8 +45,8 @@ class FaceAnalysis:
             print(f"❌ FILE_TYPE [{ty}] of input is not supported.")
             return []
         # detect and other func
+        faces = []
         if mode == FACE_MODE.single:
-            faces = []
             for img in imgs:
                 face = self.detect_img(img)
                 if len(face) == 0:
@@ -54,8 +55,13 @@ class FaceAnalysis:
                     face = face[0]
                 faces.append(face)
         elif mode == FACE_MODE.multi:
+            # todo 实现具体的 多 cat 识别。
             for img in imgs:
                 faces = self.detect_img(img)
+        # other function  # todo 在这里获取 embedding 等。
+        for face in faces:
+            self.get_embedding(face)
+
         return faces
 
     def detect_img(self, img):
@@ -96,10 +102,16 @@ class FaceAnalysis:
 
         return res
 
-
-
-
-
+    def get_embedding(self, face):
+        """
+        获取 face.img の embedding; # todo 之后如何增加模块的话，可以合并写到 model 本身对 Face 操作。
+        :param face: 输入一个 face 类型
+        :return:
+        """
+        assert isinstance(face, Face)
+        embedding_model = self.models['embedding']
+        face.embedding = embedding_model.get(face.img)
+        return face.embedding
 
 
 

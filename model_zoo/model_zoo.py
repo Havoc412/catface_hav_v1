@@ -2,6 +2,7 @@ import os.path as osp
 
 from .obb import Obb
 from .pose import Pose
+from .embedding import Embedding
 
 
 class ModelRouter:
@@ -9,13 +10,13 @@ class ModelRouter:
         self.pt_file = pt_file
 
     def get_model(self, **kwargs):
-        #  todo 之后这里区分一下 yolo 和 embedding 的模型
-        if self.pt_file.endswith("embedding.pt"):
-            return None  # todo wait for embedding part
-        elif self.pt_file.endswith("obb.pt"):
+        #  todo 先这样粗糙的做区分。 insightFace 的实现方式好像是根据模型的 input 等数据来作为标准。
+        if self.pt_file.endswith("embedding.pt") or self.pt_file.endswith("embedding.pth"):
+            return Embedding(model_path=self.pt_file)
+        elif self.pt_file.endswith("obb.pt") or self.pt_file.endswith("obb.pth"):
             verbose = kwargs.get("verbose", False)
             return Obb(self.pt_file, verbose)
-        elif self.pt_file.endswith("pose.pt"):
+        elif self.pt_file.endswith("pose.pt") or self.pt_file.endswith("pose.pth"):
             verbose = kwargs.get("verbose", False)
             return Pose(self.pt_file, verbose)
         else:
@@ -24,7 +25,7 @@ class ModelRouter:
 
 
 def get_model(path, **kwargs):
-    assert path.endswith('.pt'), f"[{path}] is not a pt file."
+    assert path.endswith('.pt') or path.endswith('.pth'), f"[{path}] is not a pt file."
     assert osp.exists(path), f"[{path}] is not exists."
     assert osp.isfile(path), f"[{path}] is not a file, please check."
     router = ModelRouter(path)

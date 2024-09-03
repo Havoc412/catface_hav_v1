@@ -74,6 +74,26 @@ def save_frames_interval(video, **kwargs):
     return frames
 
 
+def get_max_idx_next(path):
+    """
+    从目标文件夹中，按照 int 从小到大的方式，获取最大的序号
+    :param path:
+    :return: 返回开始的第一个序号。
+    """
+    _max_idx = 0
+    for dir_name in os.listdir(path):
+        if not os.path.isdir(os.path.join(path, dir_name)):
+            continue
+        try:
+            idx = int(dir_name)
+            if idx > _max_idx:
+                _max_idx = idx
+        except Exception as e:
+            print(f"{dir_name} is not a number, pass.", e)
+            continue
+    return _max_idx + 1
+
+
 if __name__ == "__main__":
     mp4 = cv2.VideoCapture(r"D:\DATA-CNN\CAT-MP4\ex3.mp4")
     print(ensure_object_type(mp4))

@@ -10,6 +10,6 @@ class FACE_MODE(Enum):
     single = 0
     multi = 1
 
-    @staticmethod
+    @staticmethod  # 或者可以用 @classmethod 来实现。
     def check(mode):
         return mode in FACE_MODE
