@@ -1,4 +1,5 @@
 import os
+import os.path as osp
 
 import cv2
 from cv2 import VideoCapture as Video
@@ -92,6 +93,20 @@ def get_max_idx_next(path):
             print(f"{dir_name} is not a number, pass.", e)
             continue
     return _max_idx + 1
+
+
+def save_single_faces(path, faces):
+    """
+
+    :param path: 保存路径
+    :param faces: Face[] 对象
+    :return:
+    """
+    if not os.path.exists(path):
+        os.mkdir(path)
+    # save the faces
+    for idx, face in enumerate(faces):
+        cv2.imwrite(osp.join(path,  f"{idx}.jpg"), face.img)
 
 
 if __name__ == "__main__":

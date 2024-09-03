@@ -26,9 +26,10 @@ class FaceAnalysis:
         self.pose_threshold = pose_threshold
         self.at = AT()
 
-    def get(self, target, mode=FACE_MODE.multi, **kwargs):
+    def get(self, target, mode=FACE_MODE.multi, only_detect=True, **kwargs):
         """
         之后可以再此模块前增加一些 前置的检测任务。
+        :param only_detect: 是否只运行 detect 部分。
         :param mode: 运行模式
         :param target: 支持 cv2 读取后的实体，或者支持的文件类型
         :return:
@@ -58,9 +59,11 @@ class FaceAnalysis:
             # todo 实现具体的 多 cat 识别。
             for img in imgs:
                 faces = self.detect_img(img)
+
         # other function  # todo 在这里获取 embedding 等。
-        for face in faces:
-            self.get_embedding(face)
+        if not only_detect:
+            for face in faces:
+                self.get_embedding(face)
 
         return faces
 
