@@ -5,7 +5,7 @@ import cv2
 from cv2 import VideoCapture as Video
 from numpy import ndarray as Img
 
-from catface_hav_v1.consts import FILE_TYPE
+from ..consts import FILE_TYPE
 
 
 def ensure_object_type(obj):
@@ -15,9 +15,9 @@ def ensure_object_type(obj):
     :return:
     """
     if isinstance(obj, Video):
-        return obj, FILE_TYPE.img
-    elif isinstance(obj, Img):
         return obj, FILE_TYPE.video
+    elif isinstance(obj, Img):
+        return obj, FILE_TYPE.img
     elif os.path.exists(obj) and os.path.isfile(obj):
         file_path = obj
         _, ext = os.path.splitext(file_path)
