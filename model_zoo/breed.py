@@ -21,14 +21,10 @@ class Breed:
         result = self.model(face.img, verbose=self.verbose)[0]
         probs = result.probs.cpu()
         # load res
-        breed_list = []
-        for ty, conf in zip(probs.top5, probs.top5conf):
-            data = {
-                'breed': self.names[ty],
-                'conf': conf.item()
-            }
-            breed_list.append(data)
-        face.breed = breed_list
+        face.breed = {
+            'top5': probs.top5,
+            'conf': probs.top5conf.tolist()
+        }
         return face.breed
 
 
@@ -38,6 +34,7 @@ if __name__ == "__main__":
     face = Face()
     face.img = cv2.imread(r"D:\DATA-CNN\Catface-embedding\415\2.jpg")
     print(model.get(face))
+    print(face.breed)
 
 
 
