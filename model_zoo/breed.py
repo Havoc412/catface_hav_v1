@@ -22,7 +22,7 @@ class Breed:
         probs = result.probs.cpu()
         # load res
         face.breed = {
-            'top5': probs.top5,
+            'top5': [self.names[i] for i in probs.top5],
             'conf': probs.top5conf.tolist()
         }
         return face.breed
