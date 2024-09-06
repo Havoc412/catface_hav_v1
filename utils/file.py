@@ -1,6 +1,8 @@
 import os
 import os.path as osp
 
+import re
+
 import cv2
 from cv2 import VideoCapture as Video
 from numpy import ndarray as Img
@@ -109,6 +111,19 @@ def save_single_faces(path, faces):
         cv2.imwrite(osp.join(path,  f"{idx}.jpg"), face.img)
 
 
+def dir_str_to_int(s):
+    """
+    eg. 能够将 37、37'、37''、37''' 此类的 str 都映射为 intの37.
+    :param s:
+    :return:
+    """
+    return int(re.sub(r'[^\d]', '', s))
+
+
 if __name__ == "__main__":
-    mp4 = cv2.VideoCapture(r"D:\DATA-CNN\CAT-MP4\ex3.mp4")
-    print(ensure_object_type(mp4))
+    # 测试用例：
+    print(dir_str_to_int('37'))  # Output: 37
+    print(dir_str_to_int('37\''))  # Output: 37
+    print(dir_str_to_int('37"'))  # Output: 37
+    print(dir_str_to_int('37\'\'\''))  # Output: 37
+

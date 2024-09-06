@@ -10,6 +10,8 @@ from catface_hav_v1.consts import FILE_TYPE, FACE_MODE
 
 
 class FaceAnalysis:
+    _detect = ['obb', 'pose']
+
     def __init__(self, name="group-1", root="./model_zoo/models", obb_threshold=.5, pose_threshold=.5, **kwargs):
         self.models = {}
         self.model_dir = ensure_model_available(name, root=root)
@@ -26,7 +28,7 @@ class FaceAnalysis:
         self.pose_threshold = pose_threshold
         self.at = AT()
 
-    def get(self, target, mode=FACE_MODE.multi, only_detect=True, **kwargs):
+    def get(self, target, mode=FACE_MODE.single, only_detect=False, **kwargs):
         """
         之后可以再此模块前增加一些 前置的检测任务。
         :param only_detect: 是否只运行 detect 部分。
@@ -57,13 +59,15 @@ class FaceAnalysis:
                 faces.append(face)
         elif mode == FACE_MODE.multi:
             # todo 实现具体的 多 cat 识别。
-            for img in imgs:
-                faces = self.detect_img(img)
+            pass
 
         # other function  # todo 在这里获取 embedding 等。
         if not only_detect:
-            for face in faces:
-                self.get_embedding(face)
+            for task, model in self.models.items():
+                if task in self._detect:
+                    continue
+                for face in faces:
+                    model.get(face)
 
         return faces
 
@@ -107,13 +111,14 @@ class FaceAnalysis:
 
     def get_embedding(self, face):
         """
-        获取 face.img の embedding; # todo 之后如何增加模块的话，可以合并写到 model 本身对 Face 操作。
+        # todo 之后可以更新掉了
+        获取 face.img の embedding;
         :param face: 输入一个 face 类型
         :return:
         """
         assert isinstance(face, Face)
         embedding_model = self.models['embedding']
-        face.embedding = embedding_model.get(face.img)
+        face.embedding = embedding_model.get_for_img(face.img)
         return face.embedding
 
 

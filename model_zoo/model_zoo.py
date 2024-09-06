@@ -3,6 +3,7 @@ import os.path as osp
 from .obb import Obb
 from .pose import Pose
 from .embedding import Embedding
+from .breed import Breed
 
 
 class ModelRouter:
@@ -19,6 +20,9 @@ class ModelRouter:
         elif self.pt_file.endswith("pose.pt") or self.pt_file.endswith("pose.pth"):
             verbose = kwargs.get("verbose", False)
             return Pose(self.pt_file, verbose)
+        elif self.pt_file.endswith("breed.pt") or self.pt_file.endswith("breed.pth"):
+            verbose = kwargs.get("verbose", False)
+            return Breed(self.pt_file, verbose)
         else:
             print(f"⚠️ Could not support model [{self.pt_file}], only for obb, pose, embedding.")
             return None

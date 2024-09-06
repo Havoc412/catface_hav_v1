@@ -1,10 +1,5 @@
 """
-实现 norm && cal_similarity，以及相关测试。
-ROOT_DIR
-├── 0.jpg
-├── 1.jpg
-├── 2.jpg
-└── ...
+测试 breed && embedding
 """
 
 import os
@@ -15,45 +10,23 @@ import pandas as pd
 
 from catface_hav_v1.app import FaceAnalysis
 from catface_hav_v1.structs import Face
+from catface_hav_v1.utils import dir_str_to_int
+
+from sklearn.neighbors import NearestNeighbors
+from sklearn.cluster import DBSCAN
+import matplotlib.pyplot as plt
 
 """ CONFIG """
-BASE_DIR = "./test/data/faces-single"
 
 
 if __name__ == "__main__":
     app = FaceAnalysis(verbose=False)
 
-    # get embedding
-    embeddings = []
-    labels = os.listdir(BASE_DIR)
-    for img_name in labels:
-        img_path = os.path.join(BASE_DIR, img_name)
+    img = cv2.imread(r"D:\DATA-CNN\DATA-CatSingle\爱赖床的图图\00692hmjly1hbv13kc94zj30lw0wh0wt.jpg")
 
-        img = cv2.imread(img_path)
-        face = Face()
-        face.img = img
+    faces = app.get(img)
+    print(len(faces))
 
-        app.get_embedding(face)
-        embeddings.append(face.normed_embedding)
-
-    # cal sim
-    # dot_list = [np.dot(i, j) for i in embeddings for j in embeddings]
-    # frame = pd.DataFrame(np.array(dot_list).reshape(len(embeddings), len(embeddings)),
-    #                      index=labels, columns=labels)
-    # print(frame)
-
-    # cal && sum
-    dot_sum_list = []
-    for i in embeddings:
-        dot_sum = 0
-        for j in embeddings:
-            dot_sum += np.dot(i, j)
-        dot_sum_list.append(dot_sum)
-
-    for i, dot_sum in zip(labels, dot_sum_list):
-        print(i, dot_sum)
-
-
-
-
+    for face in faces:
+        print(face.embedding[:3], face.breed)
 

@@ -7,6 +7,7 @@ from numpy import ndarray as Img
 
 from catface_hav_v1.utils import show_config, resize_image, preprocess_input
 from catface_hav_v1.nets import Arcface
+from catface_hav_v1.structs import Face
 
 
 class Embedding:
@@ -41,8 +42,9 @@ class Embedding:
             self.net = self.net.cuda()
             cudnn.benchmark = True
 
-    def get(self, face_img):
+    def get_for_img(self, face_img):
         """
+        直接处理的是 image 数据
         这里是加收建立在 obb-pose-at 处理之后的 Face.img 传入。
         :param face_img: 图像数据
         :return:
@@ -60,3 +62,13 @@ class Embedding:
             # predict
             embedding = self.net(tensor).cpu().numpy()[0]  # arcface 会返回一个数组。
             return embedding
+
+    def get(self, face):
+        """
+        套一层，用于 FA 中循环调用 get 方法。
+        :param face:
+        :return:
+        """
+        assert isinstance(face, Face)
+        face.embedding = self.get_for_img(face.img)
+        return face.embedding
