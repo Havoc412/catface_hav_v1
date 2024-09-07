@@ -92,7 +92,6 @@ class DBSCAN:
                     print(f'聚类 {cluster_label} 的点位对应的标签: {cluster_labels}')
 
         # 计算聚类中心
-        print(X)
         centers = calculate_cluster_centers(X, labels)
 
         if show_pca_3D:
