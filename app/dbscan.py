@@ -13,6 +13,7 @@ from catface_hav_v1.structs import Face
 def calculate_cluster_centers(embeddings, labels):
     """
     计算聚类中心，实际就是 区平均值。
+    将离群值也全都考虑进去。
     :param embeddings:
     :param labels:
     :return:
@@ -20,10 +21,19 @@ def calculate_cluster_centers(embeddings, labels):
     centers = []
     unique_labels = set(labels)
     for label in unique_labels:
+        points = embeddings[labels == label]
         if label != -1:  # 排除噪声点
-            points = embeddings[labels == label]
             center = points.mean(axis=0)
-            centers.append(center)
+            centers.append({
+                'embedding': center,
+                'cnt': len(points)
+            })
+        else:  # 添加所有的离群值
+            for point in points:
+                centers.append({
+                    'embedding': point,
+                    'cnt': 0.8
+                })
     return centers
 
 
@@ -98,10 +108,10 @@ class DBSCAN:
             import matplotlib.pyplot as plt
             from sklearn.decomposition import PCA
 
-            centers = np.array(centers)
+            centers_embedding = np.array([_['embedding'] for _ in centers if _['cnt'] >= 1])
             pca = PCA(n_components=3)
             X_pca = pca.fit_transform(X)
-            centers_pca = pca.transform(centers)
+            centers_pca = pca.transform(centers_embedding)
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d')
 

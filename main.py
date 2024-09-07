@@ -34,15 +34,13 @@ if __name__ == "__main__":
         img = cv2.imread(img_path)
         embedding = app.only_get_embedding(img)
 
-        breed = app.only_get_breed(img)
-        print(breed)
-        exit(0)
+        # breed = app.only_get_breed(img)
 
         embeddings.append(embedding)
 
     print(len(embeddings))
     centers = dbscan.filtrate_embeddings(embeddings, show_pca=True)
-    print(len(centers))
+    print(len(centers), [_['cnt'] for _ in centers])
 
 
 
