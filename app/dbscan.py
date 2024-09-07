@@ -109,6 +109,8 @@ class DBSCAN:
             from sklearn.decomposition import PCA
 
             centers_embedding = np.array([_['embedding'] for _ in centers if _['cnt'] >= 1])
+            if len(centers_embedding) == 0:
+                return centers
             pca = PCA(n_components=3)
             X_pca = pca.fit_transform(X)
             centers_pca = pca.transform(centers_embedding)
