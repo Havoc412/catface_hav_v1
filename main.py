@@ -8,25 +8,38 @@ import cv2
 import numpy as np
 import pandas as pd
 
-from catface_hav_v1.app import FaceAnalysis
+from catface_hav_v1.app import FaceAnalysis, DBSCAN
 from catface_hav_v1.structs import Face
 from catface_hav_v1.utils import dir_str_to_int
 
 from sklearn.neighbors import NearestNeighbors
-from sklearn.cluster import DBSCAN
 import matplotlib.pyplot as plt
 
 """ CONFIG """
+DIR_PATH = r"D:\DATA-CNN\Catface-embedding\69"
 
 
 if __name__ == "__main__":
+    # 列出目录中的文件
+    files = os.listdir(DIR_PATH)
+    # 按文件名数字排序
+    sorted_files = sorted(files, key=lambda x: int(x.split('.')[0]))
+
     app = FaceAnalysis(verbose=False)
+    dbscan = DBSCAN(eps=.4, verbose=True)
 
-    img = cv2.imread(r"D:\DATA-CNN\DATA-CatSingle\爱赖床的图图\00692hmjly1hbv13kc94zj30lw0wh0wt.jpg")
+    embeddings = []
+    for file_name in sorted_files:
+        img_path = os.path.join(DIR_PATH, file_name)
+        img = cv2.imread(img_path)
+        embedding = app.only_get_embedding(img)
 
-    faces = app.get(img)
-    print(len(faces))
+        embeddings.append(embedding)
 
-    for face in faces:
-        print(face.embedding[:3], face.breed)
+    print(len(embeddings))
+    centers = dbscan.filtrate_embeddings(embeddings, show_pca=True)
+    print(len(centers))
+
+
+
 

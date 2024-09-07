@@ -109,17 +109,17 @@ class FaceAnalysis:
 
         return res
 
-    def get_embedding(self, face):
+    def only_get_embedding(self, face_img):
         """
         # todo 之后可以更新掉了
-        获取 face.img の embedding;
-        :param face: 输入一个 face 类型
+        :param face_img: 输入一个 Img
         :return:
         """
-        assert isinstance(face, Face)
+        import numpy as np
+        assert isinstance(face_img, np.ndarray)
         embedding_model = self.models['embedding']
-        face.embedding = embedding_model.get_for_img(face.img)
-        return face.embedding
+        embedding = embedding_model.get_for_img(face_img)
+        return embedding
 
 
 
