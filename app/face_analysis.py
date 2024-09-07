@@ -121,5 +121,12 @@ class FaceAnalysis:
         embedding = embedding_model.get_for_img(face_img)
         return embedding
 
+    def only_get_breed(self, face_img):
+        import numpy as np
+        assert isinstance(face_img, np.ndarray)
+        breed_model = self.models['breed']
+        breed = breed_model.get_for_img(face_img)
+        return breed
+
 
 

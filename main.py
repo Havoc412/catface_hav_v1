@@ -34,6 +34,10 @@ if __name__ == "__main__":
         img = cv2.imread(img_path)
         embedding = app.only_get_embedding(img)
 
+        breed = app.only_get_breed(img)
+        print(breed)
+        exit(0)
+
         embeddings.append(embedding)
 
     print(len(embeddings))

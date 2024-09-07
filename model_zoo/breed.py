@@ -18,14 +18,18 @@ class Breed:
     def get(self, face):
         assert isinstance(face, Face)
         # cls 任务一定会有一个结果的吧。
-        result = self.model(face.img, verbose=self.verbose)[0]
+        face.breed = self.get_for_img(face.img)
+        return face.breed
+
+    def get_for_img(self, img):
+        result = self.model(img, verbose=self.verbose)[0]
         probs = result.probs.cpu()
         # load res
-        face.breed = {
+        breed = {
             'top5': [self.names[i] for i in probs.top5],
             'conf': probs.top5conf.tolist()
         }
-        return face.breed
+        return breed
 
 
 if __name__ == "__main__":
