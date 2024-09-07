@@ -3,36 +3,52 @@
 选出具有代表性的中心。
 """
 import numpy as np
+import pandas as pd
 
 from sklearn.neighbors import NearestNeighbors
 from sklearn.cluster import DBSCAN as dbscan
 
 from catface_hav_v1.structs import Face
+from catface_hav_v1.utils import merge_breeds
 
 
-def calculate_cluster_centers(embeddings, labels):
+def calculate_cluster_centers(embeddings, breeds, labels):
     """
     计算聚类中心，实际就是 区平均值。
     将离群值也全都考虑进去。
-    :param embeddings:
+    :param breeds: list[]
+    :param embeddings: np[]
     :param labels:
     :return:
     """
     centers = []
+    # pre data
+    data = {
+        'labels': labels,
+        'breeds': breeds
+    }
+    df = pd.DataFrame(data)
+
     unique_labels = set(labels)
     for label in unique_labels:
         points = embeddings[labels == label]
+        selected_data = df[df['labels'] == label]
+        selected_breeds = selected_data['breeds'].tolist()
+
         if label != -1:  # 排除噪声点
             center = points.mean(axis=0)
+            breed = merge_breeds(selected_breeds)
             centers.append({
                 'embedding': center,
-                'cnt': len(points)
+                'cnt': len(points),
+                **breed
             })
         else:  # 添加所有的离群值
-            for point in points:
+            for point, breed in zip(points, selected_breeds):
                 centers.append({
                     'embedding': point,
-                    'cnt': 0.8
+                    'cnt': 0.8,
+                    **breed
                 })
     return centers
 
@@ -50,13 +66,14 @@ class DBSCAN:
         """
         过滤 embedding，得到具有代表性的目标。
         :param faces: 依靠 check_embeddings() 具有兼容 embedding[] && Face[] 的能力，
-
         :param show_pca: 是否展示 pca 3D 的效果。
         :return:
         """
+        assert len(faces) > 0 and isinstance(faces[0], Face)
         show_pca_3D = kwargs.get('show_pca', False)
 
-        embeddings = check_embeddings(faces)
+        embeddings = [face.normed_embedding for face in faces]
+        breeds = [face.breed for face in faces]
         if len(embeddings) < 2:
             return embeddings
 
@@ -102,7 +119,7 @@ class DBSCAN:
                     print(f'聚类 {cluster_label} 的点位对应的标签: {cluster_labels}')
 
         # 计算聚类中心
-        centers = calculate_cluster_centers(X, labels)
+        centers = calculate_cluster_centers(X, breeds, labels)
 
         if show_pca_3D:
             import matplotlib.pyplot as plt
@@ -134,29 +151,3 @@ class DBSCAN:
             plt.show()
 
         return centers
-
-
-def check_embeddings(objs):
-    """
-    使 DBSCAN 同时兼容 处理 faces && 直接处理 embeddings
-    :param objs:
-    :return:
-    """
-    if len(objs) == 0:
-        return []
-    obj = objs[0]
-    print(obj[:3])
-    if isinstance(obj, np.ndarray):
-        return objs
-    elif isinstance(obj, Face):
-        return [obj.embedding for obj in objs]
-    else:
-        raise ValueError(f"Unknown object {type(obj)}")
-
-
-
-
-
-
-
-

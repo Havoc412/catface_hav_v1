@@ -28,19 +28,23 @@ if __name__ == "__main__":
     app = FaceAnalysis(verbose=False)
     dbscan = DBSCAN(eps=.4, verbose=True)
 
-    embeddings = []
+    faces = []
     for file_name in sorted_files:
         img_path = os.path.join(DIR_PATH, file_name)
         img = cv2.imread(img_path)
-        embedding = app.only_get_embedding(img)
+
+        face = Face()
+        face.embedding = app.only_get_embedding(img)
+        face.breed = app.only_get_breed(img)
 
         # breed = app.only_get_breed(img)
 
-        embeddings.append(embedding)
+        faces.append(face)
 
-    print(len(embeddings))
-    centers = dbscan.filtrate_embeddings(embeddings, show_pca=True)
+    print(len(faces))
+    centers = dbscan.filtrate_embeddings(faces, show_pca=True)
     print(len(centers), [_['cnt'] for _ in centers])
+    print([(_['top5'], _['conf']) for _ in centers])
 
 
 
