@@ -16,7 +16,7 @@ def calculate_cluster_centers(embeddings, breeds, labels):
     """
     计算聚类中心，实际就是 区平均值。
     将离群值也全都考虑进去。
-    :param breeds: list[]
+    :param breeds: list[]`
     :param embeddings: np[]
     :param labels:
     :return:
