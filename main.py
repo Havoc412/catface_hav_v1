@@ -44,7 +44,7 @@ if __name__ == "__main__":
     print(len(faces))
     centers = dbscan.filtrate_embeddings(faces, show_pca=True)
     print(len(centers), [_['cnt'] for _ in centers])
-    print([(_['top5'], _['conf']) for _ in centers])
+    print([_['breed'] for _ in centers])
 
 
 

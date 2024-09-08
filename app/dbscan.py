@@ -41,14 +41,14 @@ def calculate_cluster_centers(embeddings, breeds, labels):
             centers.append({
                 'embedding': center,
                 'cnt': len(points),
-                **breed
+                'breed': breed
             })
         else:  # 添加所有的离群值
             for point, breed in zip(points, selected_breeds):
                 centers.append({
                     'embedding': point,
-                    'cnt': 0.8,
-                    **breed
+                    'cnt': 0.8,  # 但是降低一定的权重。
+                    'breed': breed
                 })
     return centers
 
