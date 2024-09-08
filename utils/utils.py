@@ -16,7 +16,13 @@ def cal_degree(pt1, pt2):
     return degrees
 
 
-def merge_breeds(breeds):
+def merge_breeds(breeds, proportion=None):
+    """
+
+    :param breeds:
+    :param proportion: conf 的 二级比重，默认都为 1
+    :return:
+    """
     # 初始化字典来存储累加的 conf 值和计数
     conf_accumulator = {}
     # 累加 conf 值
@@ -30,7 +36,9 @@ def merge_breeds(breeds):
     sorted_conf = sorted(conf_accumulator.items(), key=lambda item: item[1]['total_conf'], reverse=True)
     # 提取排序后的 top5 和 conf
     sorted_top5 = [item[0] for item in sorted_conf]
-    sorted_conf_values = [item[1]['total_conf'] / len(breeds) for item in sorted_conf]
+    if proportion is None:
+        proportion = len(breeds)
+    sorted_conf_values = [item[1]['total_conf'] / proportion for item in sorted_conf]
 
     return {
         'top5': sorted_top5,

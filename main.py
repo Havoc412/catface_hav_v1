@@ -10,7 +10,7 @@ import pandas as pd
 
 from catface_hav_v1.app import FaceAnalysis, DBSCAN
 from catface_hav_v1.structs import Face
-from catface_hav_v1.utils import dir_str_to_int
+from catface_hav_v1.utils import merge_breeds
 
 from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
@@ -43,8 +43,20 @@ if __name__ == "__main__":
 
     print(len(faces))
     centers = dbscan.filtrate_embeddings(faces, show_pca=True)
-    print(len(centers), [_['cnt'] for _ in centers])
+
     print([_['breed'] for _ in centers])
+
+    cnt_sum = 0
+    for center in centers:
+        print(center['cnt'])
+        cnt_sum += center['cnt']
+        print(center['breed']['conf'])
+        for i in range(len(center['breed']['conf'])):
+            center['breed']['conf'][i] *= center['cnt']
+        print(center['breed']['conf'])
+    breed = merge_breeds([center['breed'] for center in centers], cnt_sum)
+
+    print(breed)
 
 
 
