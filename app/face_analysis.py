@@ -115,11 +115,14 @@ class FaceAnalysis:
         :param face_img: 输入一个 Img
         :return:
         """
-        import numpy as np
-        assert isinstance(face_img, np.ndarray)
         embedding_model = self.models['embedding']
-        embedding = embedding_model.get_for_img(face_img)
-        return embedding
+        embedding_model.get(face_img)
+        return face_img.normed_embedding
+        # import numpy as np
+        # assert isinstance(face_img, np.ndarray)
+        # embedding_model = self.models['embedding']
+        # embedding = embedding_model.get_for_img(face_img)
+        # return embedding
 
     def only_get_breed(self, face_img):
         import numpy as np

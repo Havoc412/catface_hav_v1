@@ -72,7 +72,7 @@ def save_frames_interval(video, **kwargs):
             break
         frames.append(frame)
         current_frame += frame_interval
-    video.release()
+    # video.release()
     print(f"📼 INFO: Video get {len(frames)} frames.")
     return frames
 
